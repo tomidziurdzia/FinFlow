@@ -6,7 +6,8 @@ WORKDIR /src
 
 # Copiamos la solución y los .csproj para cachear restore
 COPY ["FinFlow.sln", "./"]
-COPY ["src/FinFlow.Application/FinFlow.Application.Contracts.csproj", "src/FinFlow.Application.Contracts/"]
+COPY ["src/FinFlow.Application.Contracts/FinFlow.Application.Contracts.csproj", "src/FinFlow.Application.Contracts/"]
+COPY ["src/FinFlow.Application.Implementation/FinFlow.Application.Implementation.csproj", "src/FinFlow.Application.Implementation/"]
 COPY ["src/FinFlow.Domain/FinFlow.Domain.csproj", "src/FinFlow.Domain/"]
 COPY ["src/FinFlow.Infrastructure/FinFlow.Infrastructure.csproj", "src/FinFlow.Infrastructure/"]
 COPY ["src/FinFlow.WebApi/FinFlow.WebApi.csproj", "src/FinFlow.WebApi/"]
