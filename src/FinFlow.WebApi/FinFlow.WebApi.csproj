@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FinFlow.Application\FinFlow.Application.csproj" />
+    <ProjectReference Include="..\FinFlow.Application.Contracts\FinFlow.Application.Contracts.csproj" />
     <ProjectReference Include="..\FinFlow.Infrastructure\FinFlow.Infrastructure.csproj" />
   </ItemGroup>
 

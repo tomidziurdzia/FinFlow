@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\FinFlow.Domain\FinFlow.Domain.csproj" />
     <ProjectReference Include="..\FinFlow.Application.Contracts\FinFlow.Application.Contracts.csproj" />
   </ItemGroup>
 

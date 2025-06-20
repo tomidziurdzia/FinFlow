@@ -1,21 +1,35 @@
-# Etapa de compilación
+# ---------------------------------------------------
+# 1) Build
+# ---------------------------------------------------
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Copiamos csproj(s) y restauramos dependencias primero (cache)
-COPY ["FinFlow.csproj", "./"]
-RUN dotnet restore "FinFlow.csproj"
+# Copiamos la solución y los .csproj para cachear restore
+COPY ["FinFlow.sln", "./"]
+COPY ["src/FinFlow.Application/FinFlow.Application.Contracts.csproj", "src/FinFlow.Application.Contracts/"]
+COPY ["src/FinFlow.Domain/FinFlow.Domain.csproj", "src/FinFlow.Domain/"]
+COPY ["src/FinFlow.Infrastructure/FinFlow.Infrastructure.csproj", "src/FinFlow.Infrastructure/"]
+COPY ["src/FinFlow.WebApi/FinFlow.WebApi.csproj", "src/FinFlow.WebApi/"]
 
-# Copiamos el resto del código y publicamos
+# Restauramos a nivel de solución
+RUN dotnet restore "FinFlow.sln"
+
+# Copiamos todo el código y publicamos sólo el WebApi
 COPY . .
-RUN dotnet publish "FinFlow.csproj" -c Release -o /app/publish
+WORKDIR "/src/src/FinFlow.WebApi"
+RUN dotnet publish "FinFlow.WebApi.csproj" -c Release -o /app/publish
 
-# Etapa de runtime
+# ---------------------------------------------------
+# 2) Runtime
+# ---------------------------------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
+
+# Traemos los binarios publicados
 COPY --from=build /app/publish .
 
-# Exponemos el puerto que uses (por defecto 80)
+# Exponemos el puerto 80
 EXPOSE 80
 
-ENTRYPOINT ["dotnet", "FinFlow.dll"]
+# Arrancamos la API
+ENTRYPOINT ["dotnet", "FinFlow.WebApi.dll"]
