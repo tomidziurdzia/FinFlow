@@ -45,8 +45,7 @@ jobs:
       - name: Log in to Railway registry
         run: |
           echo "${{ secrets.RAILWAY_TOKEN }}" \
-            | docker login registry.railway.app \
-              --username user --password-stdin
+            | docker login --username user --password-stdin registry.railway.app
 
       - name: Build Docker image
         run: |
