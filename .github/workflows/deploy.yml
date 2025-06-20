@@ -1,4 +1,3 @@
-# .github/workflows/railway-deploy.yml
 name: .NET 9 CI/CD → Railway
 
 on:
@@ -11,8 +10,10 @@ jobs:
   build:
     name: Build & Test
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Setup .NET 9 SDK
         uses: actions/setup-dotnet@v4
@@ -32,23 +33,19 @@ jobs:
     name: Build & Deploy to Railway
     needs: build
     runs-on: ubuntu-latest
-    # Usamos el contenedor oficial de Railway CLI v1.4+,
-    # que incluye dotnet y la CLI lista para usar.
     container:
       image: ghcr.io/railwayapp/cli:latest
 
     env:
-      # Tu Railway Personal Token en GitHub Secrets
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Build, push & deploy
         run: |
-          # Este comando:
-          # 1) detecta tu Dockerfile
-          # 2) build → image
-          # 3) push al registry interno de Railway
-          # 4) despliega tu servicio
-          railway up --ci --detach
+          railway up \
+            --service ${{ secrets.RAILWAY_SERVICE_ID }} \
+            --ci \
+            --detach
