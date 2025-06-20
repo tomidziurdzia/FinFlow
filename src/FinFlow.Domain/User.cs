@@ -1,10 +1,11 @@
 ﻿using FinFlow.Domain.Audit;
-using Microsoft.AspNetCore.Identity;
 
 namespace FinFlow.Domain;
 
-public class User : IdentityUser, IAudit
+public class User : IAudit
 {
+    public Guid Id { get; set; }
+    public string AuthId { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public DateTime CreatedAt { get; set; }
