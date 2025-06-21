@@ -25,23 +25,6 @@ public class UserRepository(ApplicationDbContext applicationDbContext) : IUserRe
         }
     }
 
-
-    public async Task Update(User user, CancellationToken cancellationToken)
-    {
-        if (user == null)
-            throw new ArgumentNullException(nameof(user));
-
-        try
-        {
-            applicationDbContext.Users.Update(user);
-            await applicationDbContext.SaveChangesAsync(cancellationToken);
-        }
-        catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == PostgresErrorCodes.UniqueViolation)
-        {
-            throw new EntityAlreadyExistsException($"A user with AuthId '{user.AuthId}' already exists.");
-        }
-    }
-
     public async Task<User?> GetUser(Guid id, CancellationToken cancellationToken)
     {
         return await applicationDbContext.Users

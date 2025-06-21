@@ -1,12 +1,17 @@
 using FinFlow.Infrastructure;
+using FinFlow.WebApi;
+using FinFlow.WebApi.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddHttpContextAccessor();
+builder.Services
+    .AddInfrastructureServices(builder.Configuration)
+    .AddWebApiServices(builder.Configuration);
 
-builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+app.UseApiServices();
+app.RegisterUserEndpoints();
 
 app.Run();

@@ -30,6 +30,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 case EntityState.Added:
                     entry.Entity.CreatedAt = DateTime.UtcNow;
                     entry.Entity.CreatedBy = username;
+                    entry.Entity.ModifiedAt = DateTime.UtcNow;
+                    entry.Entity.ModifiedBy = username;
                     break;
 
                 case EntityState.Modified:
