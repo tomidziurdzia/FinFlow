@@ -23,7 +23,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         var username = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Email)?.Value ?? "system";
 
-        foreach (var entry in ChangeTracker.Entries<IAudit>())
+        foreach (var entry in ChangeTracker.Entries<IEntity>())
         {
             switch (entry.State)
             {
@@ -45,9 +45,20 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Category> Categories => Set<Category>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<Category>()
+            .HasOne(c => c.User)
+            .WithMany(u => u.Categories)
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Category>()
+            .Property(c => c.Type)
+            .HasConversion<string>();
+        
         base.OnModelCreating(builder);
     }
 }
