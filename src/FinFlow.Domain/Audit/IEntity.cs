@@ -1,6 +1,6 @@
 ﻿namespace FinFlow.Domain.Audit;
 
-public interface IAudit
+public interface IEntity
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }
