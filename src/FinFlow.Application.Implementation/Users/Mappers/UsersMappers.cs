@@ -6,11 +6,11 @@ namespace FinFlow.Application.Implementation.Users.Mappers;
 
 internal static class UsersMappers
 {
-    internal static User MapFromCreateRequest(UserRequest request)
+    internal static User MapToDomain(UserRequest request)
     {
         return new User
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid().ToString(),
             AuthId = request.AuthId,
             FirstName = request.FirstName,
             LastName = request.LastName,

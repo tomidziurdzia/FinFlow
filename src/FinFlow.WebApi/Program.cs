@@ -12,6 +12,7 @@ builder.Services
 var app = builder.Build();
 
 app.UseApiServices();
-app.RegisterUserEndpoints();
+app.RegisterUserEndpoints()
+    .RegisterCategoryEndpoints();
 
 app.Run();

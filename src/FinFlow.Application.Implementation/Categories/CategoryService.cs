@@ -2,10 +2,13 @@ using FinFlow.Application.Contracts.Categories;
 using FinFlow.Application.Contracts.Categories.Request;
 using FinFlow.Application.Contracts.Categories.Response;
 using FinFlow.Application.Contracts.Shared;
+using FinFlow.Application.Contracts.Users;
+using FinFlow.Application.Implementation.Categories.Mappers;
+using FinFlow.Domain.Repositories;
 
 namespace FinFlow.Application.Implementation.Categories;
 
-public class CategoryService : ICategoryService
+public class CategoryService(ICategoryRepository categoryRepository, ICurrentUserService currentUserService) : ICategoryService
 {
     public Task<CategoryResponse> Get(Guid id, CancellationToken cancellationToken)
     {
@@ -17,9 +20,22 @@ public class CategoryService : ICategoryService
         throw new NotImplementedException();
     }
 
-    public Task<CreatedResponse> Create(CategoryRequest request, CancellationToken cancellationToken)
+    public async Task<CreatedResponse> Create(CategoryRequest request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var userId = await currentUserService.GetUserIdAsync(cancellationToken);
+        
+        if (userId == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+        
+        var category = CategoriesMappers.MapToDomain(request);
+        category.Id = Guid.NewGuid().ToString();
+        category.UserId = userId;
+        
+        await categoryRepository.Create(category, cancellationToken);
+
+        return new CreatedResponse(category.Id);
     }
 
     public Task Update(CategoryRequest request, CancellationToken cancellationToken)

@@ -12,7 +12,9 @@ public class UserRepository(ApplicationDbContext applicationDbContext) : IUserRe
     public async Task Create(User user, CancellationToken cancellationToken)
     {
         if (user == null)
+        {
             throw new ArgumentNullException(nameof(user));
+        }
 
         try
         {
@@ -25,7 +27,7 @@ public class UserRepository(ApplicationDbContext applicationDbContext) : IUserRe
         }
     }
 
-    public async Task<User?> GetUser(Guid id, CancellationToken cancellationToken)
+    public async Task<User?> GetUser(string id, CancellationToken cancellationToken)
     {
         return await applicationDbContext.Users
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
@@ -34,9 +36,24 @@ public class UserRepository(ApplicationDbContext applicationDbContext) : IUserRe
     public async Task<User?> GetUserByAuthId(string authId, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(authId))
+        {
             throw new ArgumentException("AuthId is required.", nameof(authId));
+        }
 
         return await applicationDbContext.Users
             .FirstOrDefaultAsync(u => u.AuthId == authId, cancellationToken);
+    }
+    
+    public async Task<string> GetUserIdByAuthId(string authId, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(authId))
+        {
+            throw new ArgumentException("AuthId is required.", nameof(authId));
+        }
+
+        var user = await applicationDbContext.Users.FirstOrDefaultAsync(u => u.AuthId == authId, cancellationToken)
+            ?? throw new ArgumentException($"User with AuthId '{authId}' not found.");
+        
+        return user.Id;
     }
 }

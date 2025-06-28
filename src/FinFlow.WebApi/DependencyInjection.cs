@@ -1,5 +1,8 @@
+using FinFlow.Application.Contracts.Categories;
 using FinFlow.Application.Contracts.Users;
+using FinFlow.Application.Implementation.Categories;
 using FinFlow.Application.Implementation.Users;
+using FinFlow.Infrastructure.Services.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -36,11 +39,13 @@ public static class DependencyInjection
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.MaxValue
                 };
             });
-
+        
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ICategoryService, CategoryService>();
 
         services.AddAuthorization();
         services.AddEndpointsApiExplorer();
