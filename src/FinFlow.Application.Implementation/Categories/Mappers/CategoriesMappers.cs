@@ -1,3 +1,4 @@
+using FinFlow.Application.Contracts.Categories.Request;
 using FinFlow.Application.Contracts.Categories.Response;
 using FinFlow.Domain;
 
@@ -5,7 +6,7 @@ namespace FinFlow.Application.Implementation.Categories.Mappers;
 
 public static class CategoriesMappers
 {
-    internal static Category MapFromCreateRequest(this Contracts.Categories.Request.CategoryRequest request)
+    internal static Category MapToDomain(CategoryRequest request)
     {
         return new Category
         {

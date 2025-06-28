@@ -16,11 +16,13 @@ public class UserService(IUserRepository userRepository) : IUserService
         return UsersMappers.MapFromEntity(user);
     }
 
-    public async Task<UserResponse?> GetUser(Guid id, CancellationToken cancellationToken)
+    public async Task<UserResponse?> GetUser(string id, CancellationToken cancellationToken)
     {
         var user = await userRepository.GetUser(id, cancellationToken);
         if (user == null)
+        {
             return null;
+        }
 
         return UsersMappers.MapFromEntity(user);
     }
@@ -41,7 +43,7 @@ public class UserService(IUserRepository userRepository) : IUserService
     
     private async Task<User> CreateInternal(UserRequest request, CancellationToken cancellationToken)
     {
-        var user = UsersMappers.MapFromCreateRequest(request);
+        var user = UsersMappers.MapToDomain(request);
 
         await userRepository.Create(user, cancellationToken);
         return user;

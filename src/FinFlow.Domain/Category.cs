@@ -7,6 +7,6 @@ public class Category : Entity
 {
     public string Name { get; set; }
     public CategoryType Type { get; set; }
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
     public User User { get; set; }
 }

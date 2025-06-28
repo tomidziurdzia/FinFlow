@@ -1,7 +1,9 @@
 ﻿using FinFlow.Application.Contracts.Persistence;
+using FinFlow.Application.Contracts.Users;
 using FinFlow.Domain.Repositories;
 using FinFlow.Infrastructure.Persistence;
 using FinFlow.Infrastructure.Repositories;
+using FinFlow.Infrastructure.Services.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +20,9 @@ public static class DependencyInjection
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         return services;
     }
