@@ -5,8 +5,10 @@ namespace FinFlow.Domain;
 
 public class Category : Entity
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public CategoryType Type { get; set; }
-    public string UserId { get; set; }
-    public User User { get; set; }
+    public string Color { get; set; } = string.Empty;
+    public string Icon { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
+    public User User { get; set; } = null!;
 }

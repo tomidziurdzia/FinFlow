@@ -11,7 +11,9 @@ public static class CategoriesMappers
         return new Category
         {
             Name = request.Name,
-            Type = request.Type
+            Type = request.Type,
+            Color = request.Color,
+            Icon = request.Icon
         };
     }
     
@@ -19,6 +21,8 @@ public static class CategoriesMappers
     {
         category.Name = request.Name;
         category.Type = request.Type;
+        category.Color = request.Color;
+        category.Icon = request.Icon;
         
         return category;
     }
@@ -28,7 +32,9 @@ public static class CategoriesMappers
         return new CategoryResponse(
             Id: category.Id,
             Name: category.Name,
-            Type: category.Type
+            Type: category.Type,
+            Color: category.Color,
+            Icon: category.Icon
         );
     }
 }
