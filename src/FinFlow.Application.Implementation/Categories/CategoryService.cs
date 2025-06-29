@@ -10,26 +10,27 @@ namespace FinFlow.Application.Implementation.Categories;
 
 public class CategoryService(ICategoryRepository categoryRepository, ICurrentUserService currentUserService) : ICategoryService
 {
-    public Task<CategoryResponse> Get(Guid id, CancellationToken cancellationToken)
+    public async Task<CategoryResponse> Get(string id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var category = await categoryRepository.Get(id, cancellationToken);
+        if (category == null)
+        {
+            throw new KeyNotFoundException($"Category with id '{id}' not found.");
+        }
+        
+        return CategoriesMappers.MapFromEntity(category);
     }
 
-    public Task<CategoryResponse[]> GetAll(CancellationToken cancellationToken)
+    public async Task<CategoryResponse[]> GetAll(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var categories = await categoryRepository.GetAll(cancellationToken);
+        return categories.Select(CategoriesMappers.MapFromEntity).ToArray();
     }
 
     public async Task<CreatedResponse> Create(CategoryRequest request, CancellationToken cancellationToken)
     {
         var userId = await currentUserService.GetUserIdAsync(cancellationToken);
-        
-        if (userId == null)
-        {
-            throw new ArgumentException("User not found");
-        }
-        
-        var category = CategoriesMappers.MapToDomain(request);
+        var category = CategoriesMappers.MapFromCreateRequest(request);
         category.Id = Guid.NewGuid().ToString();
         category.UserId = userId;
         
@@ -38,13 +39,27 @@ public class CategoryService(ICategoryRepository categoryRepository, ICurrentUse
         return new CreatedResponse(category.Id);
     }
 
-    public Task Update(CategoryRequest request, CancellationToken cancellationToken)
+    public async Task Update(string id, CategoryRequest request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var existingCategory = await categoryRepository.Get(id, cancellationToken);
+        if (existingCategory == null)
+        {
+            throw new KeyNotFoundException($"Category with id '{id}' not found.");
+        }
+        
+        var category = CategoriesMappers.MapFromUpdateRequest(request, existingCategory);
+
+        await categoryRepository.Update(category, cancellationToken);
     }
 
-    public Task Delete(Guid id, CancellationToken cancellationToken)
+    public async Task Delete(string id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var existingCategory = await categoryRepository.Get(id, cancellationToken);
+        if (existingCategory == null)
+        {
+            throw new KeyNotFoundException($"Category with id '{id}' not found.");
+        }
+
+        await categoryRepository.Delete(existingCategory.Id, cancellationToken);
     }
 }
