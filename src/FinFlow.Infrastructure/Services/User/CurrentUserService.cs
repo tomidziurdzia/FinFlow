@@ -7,19 +7,10 @@ namespace FinFlow.Infrastructure.Services.User;
 
 public class CurrentUserService(IHttpContextAccessor httpContextAccessor, IUserRepository userRepository) : ICurrentUserService
 {
-    public string? AuthId =>
+    public string AuthId =>
         httpContextAccessor.HttpContext?
             .User?
-            .Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            .Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value!;
     
-    public async Task<string?> GetUserIdAsync(CancellationToken cancellationToken)
-    {
-        var authId = AuthId;
-        if (string.IsNullOrWhiteSpace(authId))
-        {
-            return null;
-        }
-
-        return await userRepository.GetUserIdByAuthId(authId, cancellationToken);
-    }
+    public async Task<string> GetUserIdAsync(CancellationToken cancellationToken) => await userRepository.GetUserIdByAuthId(AuthId, cancellationToken);
 }
