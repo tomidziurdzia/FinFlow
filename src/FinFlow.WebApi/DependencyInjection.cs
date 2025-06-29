@@ -1,9 +1,11 @@
 using FinFlow.Application.Contracts.Categories;
 using FinFlow.Application.Contracts.Transactions;
 using FinFlow.Application.Contracts.Users;
+using FinFlow.Application.Contracts.Wallets;
 using FinFlow.Application.Implementation.Categories;
 using FinFlow.Application.Implementation.Transactions;
 using FinFlow.Application.Implementation.Users;
+using FinFlow.Application.Implementation.Wallets;
 using FinFlow.Infrastructure.Services.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -49,6 +51,8 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<ITransactionService, TransactionService>();
+        services.AddScoped<IWalletService, WalletService>();
+        services.AddScoped<ITransferService, TransferService>();
 
         services.AddAuthorization();
         services.AddEndpointsApiExplorer();

@@ -4,9 +4,10 @@ namespace FinFlow.Domain;
 
 public class User : Entity
 {
-    public string AuthId { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public ICollection<Category> Categories { get; set; }
-    public ICollection<Transaction> Transactions { get; set; }
+    public string AuthId { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public ICollection<Category> Categories { get; set; } = new List<Category>();
+    public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+    public ICollection<Wallet> Wallets { get; set; } = new List<Wallet>();
 }

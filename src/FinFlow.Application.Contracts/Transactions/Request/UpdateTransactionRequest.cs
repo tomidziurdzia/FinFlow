@@ -10,4 +10,5 @@ public class UpdateTransactionRequest
     public DateTime Date { get; set; }
     public string? Notes { get; set; }
     public string CategoryId { get; set; } = string.Empty;
+    public string WalletId { get; set; } = string.Empty;
 }

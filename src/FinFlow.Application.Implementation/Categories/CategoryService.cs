@@ -17,7 +17,7 @@ public class CategoryService(ICategoryRepository categoryRepository, ICurrentUse
         {
             throw new KeyNotFoundException($"Category with id '{id}' not found.");
         }
-        
+
         return CategoriesMappers.MapFromEntity(category);
     }
 
@@ -30,10 +30,9 @@ public class CategoryService(ICategoryRepository categoryRepository, ICurrentUse
     public async Task<CreatedResponse> Create(CategoryRequest request, CancellationToken cancellationToken)
     {
         var userId = await currentUserService.GetUserIdAsync(cancellationToken);
-        var category = CategoriesMappers.MapFromCreateRequest(request);
+        var category = CategoriesMappers.MapFromCreateRequest(request, userId);
         category.Id = Guid.NewGuid().ToString();
-        category.UserId = userId;
-        
+
         await categoryRepository.Create(category, cancellationToken);
 
         return new CreatedResponse(category.Id);
@@ -46,7 +45,7 @@ public class CategoryService(ICategoryRepository categoryRepository, ICurrentUse
         {
             throw new KeyNotFoundException($"Category with id '{id}' not found.");
         }
-        
+
         var category = CategoriesMappers.MapFromUpdateRequest(request, existingCategory);
 
         await categoryRepository.Update(category, cancellationToken);
@@ -59,6 +58,9 @@ public class CategoryService(ICategoryRepository categoryRepository, ICurrentUse
         {
             throw new KeyNotFoundException($"Category with id '{id}' not found.");
         }
+
+        if (existingCategory.Transactions != null && existingCategory.Transactions.Any())
+            throw new InvalidOperationException("Cannot delete a category with associated transactions.");
 
         await categoryRepository.Delete(existingCategory.Id, cancellationToken);
     }
