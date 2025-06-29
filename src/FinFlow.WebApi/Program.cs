@@ -14,6 +14,8 @@ var app = builder.Build();
 app.UseApiServices();
 app.RegisterUserEndpoints()
     .RegisterCategoryEndpoints()
-    .RegisterTransactionEndpoints();
+    .RegisterTransactionEndpoints()
+    .RegisterWalletEndpoints()
+    .RegisterTransferEndpoints();
 
 app.Run();

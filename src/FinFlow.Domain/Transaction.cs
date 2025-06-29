@@ -12,6 +12,8 @@ public class Transaction : Entity
     public string? Notes { get; set; }
     public string UserId { get; set; } = string.Empty;
     public string CategoryId { get; set; } = string.Empty;
+    public string WalletId { get; set; } = string.Empty;
     public User User { get; set; } = null!;
     public Category Category { get; set; } = null!;
+    public Wallet Wallet { get; set; } = null!;
 }

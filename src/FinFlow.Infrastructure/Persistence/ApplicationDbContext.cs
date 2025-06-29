@@ -38,9 +38,27 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<User> Users => Set<User>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
+    public DbSet<Wallet> Wallets => Set<Wallet>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        // Configure all ID properties as strings
+        builder.Entity<User>()
+            .Property(u => u.Id)
+            .HasColumnType("text");
+
+        builder.Entity<Category>()
+            .Property(c => c.Id)
+            .HasColumnType("text");
+
+        builder.Entity<Transaction>()
+            .Property(t => t.Id)
+            .HasColumnType("text");
+
+        builder.Entity<Wallet>()
+            .Property(w => w.Id)
+            .HasColumnType("text");
+
         builder.Entity<Category>()
             .HasOne(c => c.User)
             .WithMany(u => u.Categories)
@@ -70,6 +88,31 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.Entity<Transaction>()
             .Property(t => t.Amount)
             .HasPrecision(18, 2);
+
+        builder.Entity<Wallet>()
+            .HasOne(w => w.User)
+            .WithMany(u => u.Wallets)
+            .HasForeignKey(w => w.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Wallet>()
+            .Property(w => w.Type)
+            .HasConversion<string>();
+
+        builder.Entity<Wallet>()
+            .Property(w => w.Currency)
+            .HasConversion<string>();
+
+        builder.Entity<Wallet>()
+            .Property(w => w.Balance)
+            .HasPrecision(18, 2);
+
+        builder.Entity<Transaction>()
+            .HasOne(t => t.Wallet)
+            .WithMany(w => w.Transactions)
+            .HasForeignKey(t => t.WalletId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired();
 
         base.OnModelCreating(builder);
     }

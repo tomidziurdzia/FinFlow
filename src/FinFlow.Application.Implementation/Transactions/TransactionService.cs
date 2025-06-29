@@ -8,7 +8,7 @@ using FinFlow.Domain.Repositories;
 
 namespace FinFlow.Application.Implementation.Transactions;
 
-public class TransactionService(ITransactionRepository transactionRepository, ICategoryRepository categoryRepository, ICurrentUserService currentUserService) : ITransactionService
+public class TransactionService(ITransactionRepository transactionRepository, ICategoryRepository categoryRepository, IWalletRepository walletRepository, ICurrentUserService currentUserService) : ITransactionService
 {
     public async Task<TransactionResponse> Get(string id, CancellationToken cancellationToken)
     {
@@ -43,9 +43,12 @@ public class TransactionService(ITransactionRepository transactionRepository, IC
         if (category == null || category.UserId != currentUserId)
             throw new KeyNotFoundException($"Category with id '{request.CategoryId}' not found.");
 
-        var transaction = TransactionMappers.MapFromCreateRequest(request);
+        var wallet = await walletRepository.Get(request.WalletId, cancellationToken);
+        if (wallet == null || wallet.UserId != currentUserId)
+            throw new KeyNotFoundException($"Wallet with id '{request.WalletId}' not found.");
+
+        var transaction = TransactionMappers.MapFromCreateRequest(request, currentUserId);
         transaction.Id = Guid.NewGuid().ToString();
-        transaction.UserId = currentUserId;
 
         await transactionRepository.Create(transaction, cancellationToken);
         return new CreatedResponse(transaction.Id);
@@ -65,6 +68,10 @@ public class TransactionService(ITransactionRepository transactionRepository, IC
         var category = await categoryRepository.Get(request.CategoryId, cancellationToken);
         if (category == null || category.UserId != currentUserId)
             throw new KeyNotFoundException($"Category with id '{request.CategoryId}' not found.");
+
+        var wallet = await walletRepository.Get(request.WalletId, cancellationToken);
+        if (wallet == null || wallet.UserId != currentUserId)
+            throw new KeyNotFoundException($"Wallet with id '{request.WalletId}' not found.");
 
         TransactionMappers.MapFromUpdateRequest(request, transaction);
         await transactionRepository.Update(transaction, cancellationToken);

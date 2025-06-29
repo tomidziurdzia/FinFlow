@@ -6,24 +6,25 @@ namespace FinFlow.Application.Implementation.Categories.Mappers;
 
 public static class CategoriesMappers
 {
-    internal static Category MapFromCreateRequest(CategoryRequest request)
+    internal static Category MapFromCreateRequest(CategoryRequest request, string userId)
     {
         return new Category
         {
             Name = request.Name,
             Type = request.Type,
             Color = request.Color,
-            Icon = request.Icon
+            Icon = request.Icon,
+            UserId = userId
         };
     }
-    
+
     internal static Category MapFromUpdateRequest(CategoryRequest request, Category category)
     {
         category.Name = request.Name;
         category.Type = request.Type;
         category.Color = request.Color;
         category.Icon = request.Icon;
-        
+
         return category;
     }
 

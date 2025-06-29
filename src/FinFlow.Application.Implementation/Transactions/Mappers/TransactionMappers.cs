@@ -6,7 +6,7 @@ namespace FinFlow.Application.Implementation.Transactions.Mappers;
 
 public static class TransactionMappers
 {
-    internal static Transaction MapFromCreateRequest(CreateTransactionRequest request)
+    internal static Transaction MapFromCreateRequest(CreateTransactionRequest request, string userId)
     {
         return new Transaction
         {
@@ -15,7 +15,9 @@ public static class TransactionMappers
             Type = request.Type,
             Date = request.Date,
             Notes = request.Notes,
-            CategoryId = request.CategoryId
+            CategoryId = request.CategoryId,
+            WalletId = request.WalletId,
+            UserId = userId
         };
     }
 
@@ -27,6 +29,7 @@ public static class TransactionMappers
         transaction.Date = request.Date;
         transaction.Notes = request.Notes;
         transaction.CategoryId = request.CategoryId;
+        transaction.WalletId = request.WalletId;
 
         return transaction;
     }
