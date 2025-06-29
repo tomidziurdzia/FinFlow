@@ -1,4 +1,5 @@
 using FinFlow.Application.Contracts.Transactions.Request;
+using FinFlow.Application.Contracts.Transactions.Response;
 using FinFlow.Domain;
 using FinFlow.Domain.Enum;
 
@@ -6,35 +7,31 @@ namespace FinFlow.Application.Implementation.Transactions.Mappers;
 
 public static class TransferMappers
 {
-    internal static Transaction MapToFromTransaction(TransferRequest request, string userId, string categoryId)
+    internal static Transaction MapToTransaction(TransferRequest request, string userId, string categoryId, bool isOutgoing, string otherWalletName, string otherWalletCurrency, string? relatedTransactionId = null)
     {
-        return new Transaction
-        {
-            Id = Guid.NewGuid().ToString(),
-            Description = $"Transfer out: {request.Description}",
-            Amount = request.Amount,
-            Type = TransactionType.Transfer,
-            Date = DateTime.UtcNow,
-            Notes = request.Notes,
-            UserId = userId,
-            CategoryId = categoryId,
-            WalletId = request.FromWalletId
-        };
-    }
+        var description = isOutgoing
+            ? $"Transfer sent to \"{otherWalletName}\" {otherWalletCurrency}"
+            : $"Transfer received from \"{otherWalletName}\" {otherWalletCurrency}";
 
-    internal static Transaction MapToToTransaction(TransferRequest request, string userId, string categoryId)
-    {
+        var notes = request.Notes ?? "";
+        if (relatedTransactionId != null)
+        {
+            notes = string.IsNullOrEmpty(notes)
+                ? $"RelatedTransactionId:{relatedTransactionId}"
+                : $"{notes}|RelatedTransactionId:{relatedTransactionId}";
+        }
+
         return new Transaction
         {
             Id = Guid.NewGuid().ToString(),
-            Description = $"Transfer in: {request.Description}",
-            Amount = request.ReceivedAmount ?? request.Amount,
+            Description = description,
+            Amount = isOutgoing ? request.Amount : (request.ReceivedAmount ?? request.Amount),
             Type = TransactionType.Transfer,
             Date = DateTime.UtcNow,
-            Notes = request.Notes,
+            Notes = notes,
             UserId = userId,
             CategoryId = categoryId,
-            WalletId = request.ToWalletId
+            WalletId = isOutgoing ? request.FromWalletId : request.ToWalletId
         };
     }
 
@@ -46,8 +43,58 @@ public static class TransferMappers
             Name = "Transfer",
             Type = CategoryType.Expense,
             Color = "#6B7280",
-            Icon = "🔄",
+            Icon = "RotateCcw",
             UserId = userId
         };
+    }
+
+    internal static TransferResponse MapFromTransactions(Transaction fromTransaction, Transaction toTransaction)
+    {
+        return new TransferResponse
+        {
+            Id = fromTransaction.Id,
+            Description = fromTransaction.Description,
+            Amount = fromTransaction.Amount,
+            FromWalletId = fromTransaction.WalletId,
+            ToWalletId = toTransaction.WalletId,
+            Notes = fromTransaction.Notes,
+            Date = fromTransaction.Date
+        };
+    }
+
+    internal static TransferResponse MapFromTransaction(Transaction transaction)
+    {
+        return new TransferResponse
+        {
+            Id = transaction.Id,
+            Description = transaction.Description,
+            Amount = transaction.Amount,
+            FromWalletId = transaction.WalletId,
+            ToWalletId = transaction.WalletId,
+            Notes = transaction.Notes,
+            Date = transaction.Date
+        };
+    }
+
+    internal static string? ExtractRelatedTransactionId(string? notes)
+    {
+        if (string.IsNullOrEmpty(notes))
+            return null;
+
+        var parts = notes.Split('|');
+        var relatedIdPart = parts.FirstOrDefault(p => p.StartsWith("RelatedTransactionId:"));
+
+        return relatedIdPart?.Replace("RelatedTransactionId:", "");
+    }
+
+    internal static string? ExtractOriginalNotes(string? notes)
+    {
+        if (string.IsNullOrEmpty(notes))
+            return null;
+
+        var parts = notes.Split('|');
+        var originalNotes = parts.Where(p => !p.StartsWith("RelatedTransactionId:"));
+
+        return originalNotes.Any() ? string.Join("|", originalNotes) : null;
     }
 }
