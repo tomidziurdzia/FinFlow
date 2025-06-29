@@ -1,6 +1,8 @@
 using FinFlow.Application.Contracts.Categories;
+using FinFlow.Application.Contracts.Transactions;
 using FinFlow.Application.Contracts.Users;
 using FinFlow.Application.Implementation.Categories;
+using FinFlow.Application.Implementation.Transactions;
 using FinFlow.Application.Implementation.Users;
 using FinFlow.Infrastructure.Services.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,7 +26,7 @@ public static class DependencyInjection
                     .AllowCredentials();
             });
         });
-        
+
         services.AddHttpContextAccessor();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -42,10 +44,11 @@ public static class DependencyInjection
                     ClockSkew = TimeSpan.MaxValue
                 };
             });
-        
+
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<ITransactionService, TransactionService>();
 
         services.AddAuthorization();
         services.AddEndpointsApiExplorer();
