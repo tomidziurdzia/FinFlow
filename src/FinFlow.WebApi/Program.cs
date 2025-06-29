@@ -13,6 +13,7 @@ var app = builder.Build();
 
 app.UseApiServices();
 app.RegisterUserEndpoints()
-    .RegisterCategoryEndpoints();
+    .RegisterCategoryEndpoints()
+    .RegisterTransactionEndpoints();
 
 app.Run();
