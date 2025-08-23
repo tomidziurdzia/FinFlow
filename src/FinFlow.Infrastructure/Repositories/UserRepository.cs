@@ -43,7 +43,18 @@ public class UserRepository(ApplicationDbContext applicationDbContext) : IUserRe
         return await applicationDbContext.Users
             .FirstOrDefaultAsync(u => u.AuthId == authId, cancellationToken);
     }
-    
+
+    public async Task<User?> GetUserByEmail(string email, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new ArgumentException("Email is required.", nameof(email));
+        }
+
+        return await applicationDbContext.Users
+            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+    }
+
     public async Task<string> GetUserIdByAuthId(string authId, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(authId))
@@ -53,7 +64,7 @@ public class UserRepository(ApplicationDbContext applicationDbContext) : IUserRe
 
         var user = await applicationDbContext.Users.FirstOrDefaultAsync(u => u.AuthId == authId, cancellationToken)
             ?? throw new ArgumentException($"User with AuthId '{authId}' not found.");
-        
+
         return user.Id;
     }
 }
