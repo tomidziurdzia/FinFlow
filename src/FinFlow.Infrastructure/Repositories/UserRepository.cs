@@ -44,17 +44,6 @@ public class UserRepository(ApplicationDbContext applicationDbContext) : IUserRe
             .FirstOrDefaultAsync(u => u.AuthId == authId, cancellationToken);
     }
 
-    public async Task<User?> GetUserByEmail(string email, CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrWhiteSpace(email))
-        {
-            throw new ArgumentException("Email is required.", nameof(email));
-        }
-
-        return await applicationDbContext.Users
-            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
-    }
-
     public async Task<string> GetUserIdByAuthId(string authId, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(authId))
